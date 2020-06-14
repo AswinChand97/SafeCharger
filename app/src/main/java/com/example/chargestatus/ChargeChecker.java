@@ -19,8 +19,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.List;
 
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
-
 public class ChargeChecker extends Worker
 {
 
@@ -42,7 +40,7 @@ public class ChargeChecker extends Worker
         ListenableFuture<List<WorkInfo>> workInformation = WorkManager.getInstance(this.getApplicationContext()).getWorkInfosByTag(BatteryStatusReceiver.TAG);
         final Intent batteryStatus = this.getApplicationContext().registerReceiver(null,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
-        if(level>=BatteryStatusReceiver.minimumSafeLimit)
+        if(level>=BatteryStatusReceiver.MINIMUM_SAFE_LIMIT)
         {
             alert();
             return Result.success();
