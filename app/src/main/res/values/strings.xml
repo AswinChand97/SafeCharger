@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Charge Status</string>
+    <string name="com.gpa.battery_status_preference">Battery Status Preference</string>
 </resources>

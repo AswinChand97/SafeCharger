@@ -17,8 +17,8 @@ public class BatteryStatusReceiver extends BroadcastReceiver
 
     public final static String TAG="BatteryStatus";
     public final static int MINIMUM_SAFE_LIMIT = 85;
-    private final static int INITIAL_DELAY = 10;
-    private final static int RECURRING_DELAY = 2;
+    public final static int INITIAL_DELAY = 10;
+    public final static int RECURRING_DELAY = 2;
     @Override
     public void onReceive(Context context, Intent intent)
     {
