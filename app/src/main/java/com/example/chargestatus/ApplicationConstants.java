@@ -4,8 +4,7 @@ public enum ApplicationConstants
 {
    initialTime,
    initialLevel,
-   timeAfterTheFirstTry,
-   levelAfterTheFirstTry,
+   isDifferenceInLevelExist,
    chargeIncreaseRate,
    finalCheck
 }
