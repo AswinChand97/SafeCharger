@@ -11,11 +11,11 @@ The following is the working of the application :
 
 The application needs a lot of improvements. Only the basic functionality is ready as of now. I will just list down the things need to be done : 
 
-* Use of rate of charge to calculate the estimated time of 85% charge. (The logic has been commented). Need to use [Shared preferences](https://developer.android.com/training/data-storage/shared-preferences)
-* There is no UI as of now. (Just the hello word :P). So atleast a simple UI needs to be shown about the efficient usage of battery or tips.
-* The notification should be something like an alarm or a call which seeks the attention of the user. The notification should also have a `turn-off` option.
+* Use of rate of charge to calculate the estimated time of 85% charge. (The logic has been commented). Need to use [Shared preferences](https://developer.android.com/training/data-storage/shared-preferences) - This is done :)
+* There is no UI as of now. (Just the instructions of the usage :P). So atleast a simple UI needs to be shown about the efficient usage of battery or tips.
+* The notification should be something like an alarm or a call which seeks the attention of the user. The notification should also have a `turn-off` option. - This is partially done now.
 
 The above list may grow with time. 
 
-PS : I am not an android developer. So there will be lot of code issues. Please feel free to suggest the corrections and contribute to this simple project.
+PS : I am not an android developer. So there will be lot of code issues. Please feel free to suggest the corrections and contribute to this simple project. 
 
