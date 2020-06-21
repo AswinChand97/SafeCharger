@@ -5,7 +5,7 @@ android {
     buildToolsVersion "30.0.0"
 
     defaultConfig {
-        applicationId "com.example.chargestatus"
+        applicationId "com.gpa.safecharge"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
