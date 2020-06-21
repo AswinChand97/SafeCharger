@@ -1,4 +1,10 @@
 <resources>
-    <string name="app_name">Charge Status</string>
+    <string name="app_name">Safe Charger</string>
     <string name="com.gpa.battery_status_preference">Battery Status Preference</string>
+    <string name="com.gpa.battery_status_channel_name">Battery Status Notification</string>
+    <string name="com.gpa.battery_status_channel_description">This displays the notification when the charge percentage has reached a safe level</string>
+    <string name="com.gpa.battery_status_channel_id">battery_status_notification</string>
+    <string name="com.gpa.battery_status_notification_title">Safe charge limit reached</string>
+    <string name="com.gpa.battery_status_notification_text">Please disconnect the phone from the charger and swipe away this notification.</string>
+    <string name="com.gpa.battery_status_app_instructions"><b>Instructions of usage</b> :\n1) Connect your phone to the charger.\n2) Do nothing.\n3) The application will alert you when the battery level has reached a safe limit.\n4) Disconnect your phone from the charger.</string>
 </resources>

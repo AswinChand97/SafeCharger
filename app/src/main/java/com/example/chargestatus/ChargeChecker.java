@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.BatteryManager;
 import android.util.Log;
 
@@ -55,7 +52,7 @@ public class ChargeChecker extends Worker
             int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             if (level >= BatteryStatusReceiver.MINIMUM_SAFE_LIMIT)
             {
-                alert();
+                BatteryStatusReceiver.alert(this.getApplicationContext());
                 return Result.success();
             }
             if (!isFinalCheck && runAttemptCount!=0)
@@ -110,12 +107,5 @@ public class ChargeChecker extends Worker
             Log.e(TAG, ex.getMessage());
         }
         return Result.retry();
-    }
-    private void alert()
-    {
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone ringtone = RingtoneManager.getRingtone(this.getApplicationContext(),notification);
-        Log.d(TAG,"inside alert method");
-        ringtone.play();
     }
 }

@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.OneTimeWorkRequest;
@@ -26,12 +28,33 @@ public class BatteryStatusReceiver extends BroadcastReceiver
     public final static int MINIMUM_SAFE_LIMIT = 85;
     public final static int INITIAL_DELAY = 5;
     public final static int RECURRING_DELAY = 2;
-    private void alert(Context context)
+    private final static int NOTIFICATION_ID = 1;
+
+
+    public static void alert(Context context)
     {
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if(notification == null)
+        {
+            notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            if(notification == null)
+            {
+                notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            }
+        }
         Ringtone ringtone = RingtoneManager.getRingtone(context,notification);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, String.valueOf(R.string.com_gpa_battery_status_channel_id))
+                .setSmallIcon(R.drawable.battery_notification_icon)
+                .setContentTitle(context.getResources().getString(R.string.com_gpa_battery_status_notification_title))
+                .setContentText(context.getResources().getString(R.string.com_gpa_battery_status_notification_text))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getResources().getString(R.string.com_gpa_battery_status_notification_text)))
+                .setSound(notification)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+        notificationManagerCompat.notify(NOTIFICATION_ID,builder.build());
         Log.d(TAG,"inside alert method");
-        ringtone.play();
+        //ringtone.play();
     }
     @Override
     public void onReceive(Context context, Intent intent)
