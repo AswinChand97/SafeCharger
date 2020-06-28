@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.gpa.safecharge"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion defaultTargetSdkVersion
         versionCode 1
         versionName "1.0"
 

@@ -81,7 +81,7 @@ public class ChargeChecker extends Worker
                     float chargeIncreaseRate = sharedPreferences.getFloat(ApplicationConstants.chargeIncreaseRate.toString(), -1f);
                     int remainingMinutesForSafeCharge = (int) Math.ceil((BatteryStatusReceiver.MINIMUM_SAFE_LIMIT - level) / chargeIncreaseRate);
                     Log.d(TAG,"remaining minutes of safe charge : " + remainingMinutesForSafeCharge + " at retry count : " + runAttemptCount );
-                    if (remainingMinutesForSafeCharge <= 14)
+                    if (remainingMinutesForSafeCharge <= BatteryStatusReceiver.REMAINING_MINUTES_FOR_SAFE_CHARGE)
                     {
                         //setting up the work constraints, the phone must be in the charging state for this work to be queued.
                         Constraints constraints = new Constraints.Builder()
