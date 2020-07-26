@@ -11,9 +11,10 @@ The following is the working of the application :
 
 The application needs a lot of improvements. Only the basic functionality is ready as of now. I will just list down the things need to be done : 
 
-* Use of rate of charge to calculate the estimated time of 85% charge. (The logic has been commented). Need to use [Shared preferences](https://developer.android.com/training/data-storage/shared-preferences) - This is done :)
 * There is no UI as of now. (Just the instructions of the usage :P). So atleast a simple UI needs to be shown about the efficient usage of battery or tips.
-* The notification should be something like an alarm or a call which seeks the attention of the user. The notification should also have a `turn-off` option. - This is partially done now.
+* The application should also have a `turn-off` option for the notification.
+* For devices having android 8 and above (mostly all the devices), the user may have to perform an additional step in the settings to receive the notification, if the application is not running. Unfortunately, only few [broacast receiver intent exceptions](https://developer.android.com/guide/components/broadcast-exceptions) are provided by Android for API level 26 and above and the required ACTION_POWER_CONNECTED intent is not available. This should be fixed.
+* Also, due to the above point, the target SDK version must be set to 25 to receive the intent in the devices having android 8 and above now. Due to this, we could not upload the application to Google Play Store. Thus, we need to identify some means to receive the ACTION_POWER_CONNECTED intent.
 
 The above list may grow with time. 
 
