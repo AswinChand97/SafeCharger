@@ -16,7 +16,6 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.OneTimeWorkRequest;
@@ -30,7 +29,7 @@ public class BatteryStatusReceiver extends BroadcastReceiver
 
     public final static String TAG="BatteryStatus";
     public final static int MINIMUM_SAFE_LIMIT = 85;
-    public final static int INITIAL_DELAY = 10;
+    public final static int INITIAL_DELAY = 5;
     public final static int RECURRING_DELAY = 2;
     private final static int NOTIFICATION_ID = 1;
     public final static int REMAINING_MINUTES_FOR_SAFE_CHARGE = 15;
@@ -62,7 +61,7 @@ public class BatteryStatusReceiver extends BroadcastReceiver
         }
         return null;
     }
-    private static void createNotificationChannel(Context context)
+    public static void createNotificationChannel(Context context)
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
@@ -73,8 +72,11 @@ public class BatteryStatusReceiver extends BroadcastReceiver
             NotificationChannel channel = new NotificationChannel(context.getResources().getString(R.string.com_gpa_battery_status_channel_id), name, importance);
             channel.setDescription(description);
             channel.setSound(getNotification(),getAudioAttributes());
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-            notificationManagerCompat.createNotificationChannel(channel);
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(channel);
+            Log.d(TAG,"channel details => name : " + name + " channel : " + channel );
+            /*NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+            notificationManagerCompat.createNotificationChannel(channel);*/
         }
     }
     public static void alert(Context context)
@@ -92,8 +94,10 @@ public class BatteryStatusReceiver extends BroadcastReceiver
         {
             builder.setSound(notification);
         }
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-        notificationManagerCompat.notify(NOTIFICATION_ID,builder.build());
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID,builder.build());
+        /*NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+        notificationManagerCompat.notify(NOTIFICATION_ID,builder.build());*/
         Log.d(TAG,"inside alert method");
         //ringtone.play();
     }
@@ -101,8 +105,9 @@ public class BatteryStatusReceiver extends BroadcastReceiver
     public void onReceive(Context context, Intent intent)
     {
         Log.d(TAG,"entered the receiver");
+
         //recreating a notification channel does not have any change
-        createNotificationChannel(context);
+        //createNotificationChannel(context);
         SharedPreferences sharedPreferences = context.getSharedPreferences(String.valueOf(R.string.com_gpa_battery_status_preference),Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();

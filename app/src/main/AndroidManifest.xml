@@ -6,7 +6,7 @@
         android:allowBackup="true"
         android:icon="@drawable/safe_charger_icon_foreground"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/safe_charger_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
         <activity android:name="com.gpa.safecharge.MainActivity">
@@ -16,7 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.gpa.safecharge.BatteryStatusReceiver">
+        <receiver android:name="com.gpa.safecharge.BatteryStatusReceiver" android:enabled="true" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
