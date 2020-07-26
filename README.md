@@ -21,8 +21,21 @@ The application needs a lot of improvements. Only the basic functionality is rea
 - [ ] Also, due to the above point, the target SDK version must be set to 25 to receive the intent in the devices having android 8 and above now. Due to this, we could not upload the application to Google Play Store. Thus, we need to identify some means to receive the ACTION_POWER_CONNECTED intent.
 
 The above list may grow with time. 
+## Screenshots
 
-PS : I am not an android developer. So there will be lot of code issues. Please feel free to suggest the corrections and contribute to this simple project.
+###### Application
+
+<img src="screenShots/safeChargerScreenShot1.jpg" alt="Notification" width="200" style="float: left; margin-right: 10px;"/>
+<img src="screenShots/safeChargerScreenShot2.jpg" alt="Home Screen" width="200" style="float: left; margin-right: 10px;"/>
+
+###### Settings on different devices which are to be enabled (android 8 or above)
+
+<img src="screenShots/settingScreenShot1.jpg" alt="Enable intelligent control or Don't optimise option" width="200" style="float: left; margin-right: 10px;"/>
+<img src="screenShots/settingScreenShot2.jpg" alt="Enable background activity option" width="200" style="float: left; margin-right: 10px;"/>
+
+
+
+PS : I am new to android development. So, there will be lot of code issues. Please feel free to suggest the corrections and contribute to this simple project.
 
 [![GitHub issues](https://img.shields.io/github/issues/AswinChand97/SafeCharger)](https://github.com/AswinChand97/SafeCharger/issues)
 [![GitHub forks](https://img.shields.io/github/forks/AswinChand97/SafeCharger)](https://github.com/AswinChand97/SafeCharger/network)
