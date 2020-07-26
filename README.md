@@ -1,4 +1,4 @@
-# ChargeStatusChecker
+# Safe Charger
 This is a simple android application to maintain healthy battery life. 
 It has been advised by some technology experts that the phone should not be  charged to a complete charge cycle repeatedly in order to maintain a good battery life.
 Also, this is just a small idea which emerged when I heard the shocking news of my friend's phone exploded near his head after a complete charge.
