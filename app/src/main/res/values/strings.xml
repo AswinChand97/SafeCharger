@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">Safe Charger</string>
+    <string name="open_drawer">Open Drawer</string>
+    <string name="close_drawer">Close Drawer</string>
     <string name="com.gpa.battery_status_preference">Battery Status Preference</string>
+    <string name="com.gpa.battery_status_app_level_preference">Application level preference</string>
     <string name="com.gpa.battery_status_channel_name">Battery Status Notification</string>
     <string name="com.gpa.battery_status_channel_description">This displays the notification when the charge percentage has reached a safe level</string>
     <string name="com.gpa.battery_status_channel_id">battery_status_notification</string>
     <string name="com.gpa.battery_status_notification_title">Safe charge limit reached</string>
+    <string name="com.gpa.battery_status_Alert_Switch_Label">Alert Switch : Keep this turned off to stop receiving the alert</string>
+    <string name="com.gpa.battery_status_Alert_Switch_Description">Turn off this to stop receiving the alert</string>
     <string name="com.gpa.battery_status_notification_text">Please disconnect the phone from the charger and swipe away this notification.</string>
-    <string name="com.gpa.battery_status_app_instructions"><b>Instructions of usage</b> :\n1) Connect your phone to the charger.\n2) The application will alert you when the battery level has reached a safe limit.\n3) Disconnect your phone from the charger.\n Note : For devices of Android 8 and above, please follow the given steps :\n i) Go to Settings-> Battery -> SafeCharger\n ii) Select \'Don\'t optimize\' or \'Allow Background Process\' (It may vary across devices)\nWorst case : If it\'s still not triggering notifications, then, please have the app. in the background, to receive notifications. Kindly bear with us, we will provide a solution to the above issue ASAP. </string>
 </resources>

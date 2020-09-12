@@ -5,24 +5,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.work.BackoffPolicy;
-import androidx.work.Constraints;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 
-import static com.gpa.safecharge.BatteryStatusReceiver.TAG;
+import static com.gpa.safecharge.SafeChargerUtil.TAG;
 
 public class ChargeChecker extends Worker
 {
@@ -45,66 +42,89 @@ public class ChargeChecker extends Worker
         {
             List<WorkInfo> requiredWorkInformation = workInformation.get();
             WorkInfo workInfo = requiredWorkInformation.get(0);
+
             Log.d(TAG,"work info : " + workInfo);
             int runAttemptCount = workInfo.getRunAttemptCount();
             Log.d(TAG," runAttemptCount : " + runAttemptCount);
             final Intent batteryStatus = this.getApplicationContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            assert batteryStatus != null;
             int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-            if (level >= BatteryStatusReceiver.MINIMUM_SAFE_LIMIT)
+            if (level >= SafeChargerUtil.MINIMUM_SAFE_LIMIT)
             {
-                BatteryStatusReceiver.alert(this.getApplicationContext());
+                SafeChargerUtil.alert(this.getApplicationContext());
+                editor.clear();
+                SafeChargerUtil.createJob(this.getApplicationContext(),true);
                 return Result.success();
             }
-            if (!isFinalCheck && runAttemptCount!=0)
+            boolean isInitialSettingDone = sharedPreferences.getBoolean(ApplicationConstants.initialSetting.toString(),false);
+            if (!isFinalCheck)
             {
-                boolean isDifferenceInLevelExist = sharedPreferences.getBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(),false);
-                if (!isDifferenceInLevelExist)
+                if (!isInitialSettingDone)
                 {
-                    long time = System.currentTimeMillis();
-                    long differenceInTime = time- sharedPreferences.getLong(ApplicationConstants.initialTime.toString(), 0);
-                    int differenceInLevel = level - sharedPreferences.getInt(ApplicationConstants.initialLevel.toString(), 0);
-                    Log.d(TAG,"difference in level : " + differenceInLevel);
-                    long differenceInMinutes =  (differenceInTime / (1000 * 60));
-                    Log.d(TAG,"difference in minutes : " + differenceInMinutes);
-                    if(differenceInLevel>0)
-                    {
-                        float chargeIncreaseRate = ((float)differenceInLevel) / differenceInMinutes;
-                        Log.d(TAG,"charge increase rate : " + chargeIncreaseRate + " charge increase rate int : " + chargeIncreaseRate);
-                        editor.putBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(),true);
-                        editor.putFloat(ApplicationConstants.chargeIncreaseRate.toString(), chargeIncreaseRate);
-                        editor.apply();
-                    }
-
+                    long currentTime = System.currentTimeMillis();
+                    Log.d(TAG,"Initial setting : current time millis : " + currentTime + " level : " + level);
+                    editor.putLong(ApplicationConstants.initialTime.toString(), currentTime);
+                    editor.putInt(ApplicationConstants.initialLevel.toString(), level);
+                    editor.putBoolean(ApplicationConstants.initialSetting.toString(),true);
+                    editor.apply();
                 }
                 else
                 {
-                    float chargeIncreaseRate = sharedPreferences.getFloat(ApplicationConstants.chargeIncreaseRate.toString(), -1f);
-                    int remainingMinutesForSafeCharge = (int) Math.ceil((BatteryStatusReceiver.MINIMUM_SAFE_LIMIT - level) / chargeIncreaseRate);
-                    Log.d(TAG,"remaining minutes of safe charge : " + remainingMinutesForSafeCharge + " at retry count : " + runAttemptCount );
-                    if (remainingMinutesForSafeCharge <= BatteryStatusReceiver.REMAINING_MINUTES_FOR_SAFE_CHARGE)
+
+                    boolean isDifferenceInLevelExist = sharedPreferences.getBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(), false);
+                    if (!isDifferenceInLevelExist)
                     {
-                        //setting up the work constraints, the phone must be in the charging state for this work to be queued.
-                        Constraints constraints = new Constraints.Builder()
-                                .setRequiresCharging(true)
-                                .build();
-                        //building  the work request
-                        WorkRequest chargeCheckRequest = new OneTimeWorkRequest.Builder(ChargeChecker.class)
-                                .setConstraints(constraints)
-                                .setBackoffCriteria(BackoffPolicy.LINEAR, BatteryStatusReceiver.RECURRING_DELAY, TimeUnit.MINUTES)
-                                .addTag(TAG)
-                                .build();
-                        //queuing the work request
-                        WorkManager.getInstance(this.getApplicationContext()).enqueue(chargeCheckRequest);
-                        editor.putBoolean(ApplicationConstants.finalCheck.toString(), true);
-                        editor.apply();
-                        return Result.failure();
+                        long time = System.currentTimeMillis();
+                        float chargeIncreaseRate = 0f;
+
+                        if (Build.VERSION.SDK_INT >= 28)
+                        {
+                            BatteryManager mBatteryManager = (BatteryManager) this.getApplicationContext().getSystemService(Context.BATTERY_SERVICE);
+                            long timeToFull = mBatteryManager.computeChargeTimeRemaining();
+                            long timeToFullInMinutes = (timeToFull / (1000*60));
+                            chargeIncreaseRate = ((float) (100 - level)) / timeToFullInMinutes;
+                            editor.putBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(), true);
+                            editor.putFloat(ApplicationConstants.chargeIncreaseRate.toString(), chargeIncreaseRate);
+                            editor.apply();
+                            Log.d(TAG," equal or above android 8 : " + chargeIncreaseRate);
+                        }
+                        else
+                        {
+                            long differenceInTime = time - sharedPreferences.getLong(ApplicationConstants.initialTime.toString(), 0);
+                            int differenceInLevel = level - sharedPreferences.getInt(ApplicationConstants.initialLevel.toString(), 0);
+                            Log.d(TAG, "difference in level : " + differenceInLevel);
+                            long differenceInMinutes = (differenceInTime / (1000 * 60));
+                            Log.d(TAG, "difference in minutes : " + differenceInMinutes);
+                            if (differenceInLevel > 0)
+                            {
+                                chargeIncreaseRate = ((float) differenceInLevel) / differenceInMinutes;
+                                editor.putBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(), true);
+                                editor.putFloat(ApplicationConstants.chargeIncreaseRate.toString(), chargeIncreaseRate);
+                                editor.apply();
+                                Log.d(TAG," below android 8 : " + chargeIncreaseRate);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        float chargeIncreaseRate = sharedPreferences.getFloat(ApplicationConstants.chargeIncreaseRate.toString(), -1f);
+                        int remainingMinutesForSafeCharge = (int) Math.ceil((SafeChargerUtil.MINIMUM_SAFE_LIMIT - level) / chargeIncreaseRate);
+                        Log.d(TAG, "remaining minutes of safe charge : " + remainingMinutesForSafeCharge + " at retry count : " + runAttemptCount);
+                        if (remainingMinutesForSafeCharge <= SafeChargerUtil.REMAINING_MINUTES_FOR_SAFE_CHARGE)
+                        {
+                            SafeChargerUtil.createJob(this.getApplicationContext(),false);
+                            editor.putBoolean(ApplicationConstants.finalCheck.toString(), true);
+                            editor.apply();
+                            return Result.failure();
+                        }
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            Log.e(TAG, ex.getMessage());
+            Log.e(TAG, Objects.requireNonNull(ex.getMessage()));
         }
         return Result.retry();
     }

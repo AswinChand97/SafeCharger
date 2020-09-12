@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:labelFor="@+id/alertSwitch"
+            android:text="@string/com.gpa.battery_status_Alert_Switch_Label"
+            android:textSize="15sp"/>
+        <Switch
+            android:id="@+id/alertSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/com.gpa.battery_status_Alert_Switch_Description"
+            android:layout_gravity="center"/>
+
+</LinearLayout>
