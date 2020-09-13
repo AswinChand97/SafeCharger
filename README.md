@@ -21,7 +21,7 @@ Used [Liquid swipe layout](https://github.com/Chrisvin/LiquidSwipe) to show the 
 ###### Application
 
 <img src="screenShots/safeChargerScreenShot1.jpg" alt="Notification" width="200" style="float: left; margin-right: 10px;"/>
-<img src="screenShots/screenCapture.gif" alt="Home Screen" width="200" style="float: left; margin-right: 10px;"/>
+<img src="screenShots/safeChargerScreenCapture.gif" alt="Home Screen" width="200" style="float: left; margin-right: 10px;"/>
 
 ###### Settings on different devices which are to be enabled (android 8 or above)
 
