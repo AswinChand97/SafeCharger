@@ -21,9 +21,6 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     public final static String TAG="BatteryStatus";
-    public final static int MINIMUM_SAFE_LIMIT = 85;
-    public final static int INITIAL_DELAY = 5;
-    public final static int RECURRING_DELAY = 2;
     ActionBarDrawerToggle drawerToggle = null;
     DrawerLayout dl = null;
     View headerView = null;
