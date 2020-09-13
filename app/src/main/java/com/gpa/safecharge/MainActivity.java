@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Core code consisting of adding work to queue
         SafeChargerUtil.createNotificationChannel(this.getApplicationContext());
-        SafeChargerUtil.createJob(this.getApplicationContext(),false);
         SharedPreferences sharedPreferences = this.getApplicationContext().getSharedPreferences(String.valueOf(R.string.com_gpa_battery_status_app_level_preference),Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         boolean isFirstJobCreated =  sharedPreferences.getBoolean(ApplicationConstants.isFirstJobCreated.toString(),false);
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         {
             editor.putBoolean(ApplicationConstants.isFirstJobCreated.toString(),true);
             editor.apply();
+            SafeChargerUtil.createJob(this.getApplicationContext(),false);
         }
     }
     //function related to navigation view

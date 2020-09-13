@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -77,32 +76,18 @@ public class ChargeChecker extends Worker
                         long time = System.currentTimeMillis();
                         float chargeIncreaseRate = 0f;
 
-                        if (Build.VERSION.SDK_INT >= 28)
+                        long differenceInTime = time - sharedPreferences.getLong(ApplicationConstants.initialTime.toString(), 0);
+                        int differenceInLevel = level - sharedPreferences.getInt(ApplicationConstants.initialLevel.toString(), 0);
+                        Log.d(TAG, "difference in level : " + differenceInLevel);
+                        long differenceInMinutes = (differenceInTime / (1000 * 60));
+                        Log.d(TAG, "difference in minutes : " + differenceInMinutes);
+                        if (differenceInLevel > 0)
                         {
-                            BatteryManager mBatteryManager = (BatteryManager) this.getApplicationContext().getSystemService(Context.BATTERY_SERVICE);
-                            long timeToFull = mBatteryManager.computeChargeTimeRemaining();
-                            long timeToFullInMinutes = (timeToFull / (1000*60));
-                            chargeIncreaseRate = ((float) (100 - level)) / timeToFullInMinutes;
+                            chargeIncreaseRate = ((float) differenceInLevel) / differenceInMinutes;
                             editor.putBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(), true);
                             editor.putFloat(ApplicationConstants.chargeIncreaseRate.toString(), chargeIncreaseRate);
                             editor.apply();
-                            Log.d(TAG," equal or above android 8 : " + chargeIncreaseRate);
-                        }
-                        else
-                        {
-                            long differenceInTime = time - sharedPreferences.getLong(ApplicationConstants.initialTime.toString(), 0);
-                            int differenceInLevel = level - sharedPreferences.getInt(ApplicationConstants.initialLevel.toString(), 0);
-                            Log.d(TAG, "difference in level : " + differenceInLevel);
-                            long differenceInMinutes = (differenceInTime / (1000 * 60));
-                            Log.d(TAG, "difference in minutes : " + differenceInMinutes);
-                            if (differenceInLevel > 0)
-                            {
-                                chargeIncreaseRate = ((float) differenceInLevel) / differenceInMinutes;
-                                editor.putBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(), true);
-                                editor.putFloat(ApplicationConstants.chargeIncreaseRate.toString(), chargeIncreaseRate);
-                                editor.apply();
-                                Log.d(TAG," below android 8 : " + chargeIncreaseRate);
-                            }
+                            Log.d(TAG," charge increase rate : " + chargeIncreaseRate);
                         }
 
                     }

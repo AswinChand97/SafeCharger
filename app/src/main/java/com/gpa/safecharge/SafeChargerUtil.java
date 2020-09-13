@@ -25,7 +25,7 @@ public class SafeChargerUtil
 
     public final static String TAG="BatteryStatus";
     public final static int MINIMUM_SAFE_LIMIT = 85;
-    public final static int INITIAL_DELAY = 1;
+    public final static int INITIAL_DELAY = 2;
     public final static int RECURRING_DELAY = 2;
     private final static int NOTIFICATION_ID = 1;
     public final static int REMAINING_MINUTES_FOR_SAFE_CHARGE = 15;

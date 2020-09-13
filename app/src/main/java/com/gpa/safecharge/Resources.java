@@ -10,7 +10,8 @@ public enum Resources
 {
     ZERO(0,"Connect your phone to the charger",R.raw.charging, Color.parseColor("#000000")),
     ONE(1,"The application will alert you when the battery level has reached a safe limit.",R.raw.bell_gold,Color.parseColor("#330009")),
-    TWO(2,"Disconnect your phone from the charger",R.raw.no_connection,Color.parseColor("#000033"));
+    TWO(2,"Disconnect your phone from the charger",R.raw.no_connection,Color.parseColor("#000033")),
+    THREE(3,"Make sure to turn on the alert switch in the navigation drawer to start receiving the alerts :)",R.raw.alert_switch,Color.parseColor("#6960EC"));
     private String instruction;
     private int identifier;
     private int animation;

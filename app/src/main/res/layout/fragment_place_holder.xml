@@ -27,7 +27,7 @@
 
     <TextView
         android:gravity="center"
-        android:textSize="26sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#FFF"
         app:layout_constraintVertical_bias="0.3"
