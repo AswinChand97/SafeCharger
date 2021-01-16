@@ -2,9 +2,11 @@
 
 ## Overview
 This is a simple android application to maintain healthy battery life. 
-It has been advised by some technology experts that the phone should not be  charged to a complete charge cycle repeatedly in order to maintain a good battery life.
+It's known that the Li-ion battery will stop charging when full capacity is reached but still having at full charge for long duration at high temperatures may cause some degradation. Stopping before 100 may also give us extra battery discharge/charge cycles too.
 Also, this is just a small idea which emerged when I heard the shocking news of my friend's phone exploded near his head after a complete charge.
 Fortunately, nothing happened to him.
+
+[Play Store link](https://play.google.com/store/apps/details?id=com.gpa.safecharge)
 
 ## Working
 The following is the working of the application : 
