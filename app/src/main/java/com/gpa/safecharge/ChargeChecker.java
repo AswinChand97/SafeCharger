@@ -33,18 +33,18 @@ public class ChargeChecker extends Worker
     public Result doWork()
     {
         SharedPreferences sharedPreferences = this.getApplicationContext().getSharedPreferences(String.valueOf(R.string.com_gpa_battery_status_preference),Context.MODE_PRIVATE);
-        boolean isFinalCheck = sharedPreferences.getBoolean(ApplicationConstants.finalCheck.toString(),false);
+        SharedPreferences sharedPreferencesAppLevel = this.getApplicationContext().getSharedPreferences(String.valueOf(R.string.com_gpa_battery_status_app_level_preference),Context.MODE_PRIVATE);
+        String currentTagName = sharedPreferencesAppLevel.getString(ApplicationConstants.currentTag.toString(),TAG);
+        Log.d(TAG,"current tag name  : " + currentTagName);
+        boolean isFinalCheck = sharedPreferences.getBoolean(ApplicationConstants.finalCheck_v2.toString(),false);
         Log.d(TAG,"isFinalCheck : " + isFinalCheck);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        ListenableFuture<List<WorkInfo>> workInformation = WorkManager.getInstance(this.getApplicationContext()).getWorkInfosByTag(TAG);
+        ListenableFuture<List<WorkInfo>> workInformation = WorkManager.getInstance(this.getApplicationContext()).getWorkInfosByTag(currentTagName);
         try
         {
-            List<WorkInfo> requiredWorkInformation = workInformation.get();
-            WorkInfo workInfo = requiredWorkInformation.get(0);
 
-            Log.d(TAG,"work info : " + workInfo);
-            int runAttemptCount = workInfo.getRunAttemptCount();
-            Log.d(TAG," runAttemptCount : " + runAttemptCount);
+            List<WorkInfo> requiredWorkInformation = workInformation.get();
+            Log.d(SafeChargerUtil.TAG," required work info : " + requiredWorkInformation);
             final Intent batteryStatus = this.getApplicationContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             assert batteryStatus != null;
             int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
@@ -52,40 +52,41 @@ public class ChargeChecker extends Worker
             {
                 SafeChargerUtil.alert(this.getApplicationContext());
                 editor.clear();
+                editor.apply();
                 SafeChargerUtil.createJob(this.getApplicationContext(),true);
                 return Result.success();
             }
-            boolean isInitialSettingDone = sharedPreferences.getBoolean(ApplicationConstants.initialSetting.toString(),false);
+            boolean isInitialSettingDone = sharedPreferences.getBoolean(ApplicationConstants.initialSetting_v2.toString(),false);
             if (!isFinalCheck)
             {
                 if (!isInitialSettingDone)
                 {
                     long currentTime = System.currentTimeMillis();
                     Log.d(TAG,"Initial setting : current time millis : " + currentTime + " level : " + level);
-                    editor.putLong(ApplicationConstants.initialTime.toString(), currentTime);
-                    editor.putInt(ApplicationConstants.initialLevel.toString(), level);
-                    editor.putBoolean(ApplicationConstants.initialSetting.toString(),true);
+                    editor.putLong(ApplicationConstants.initialTime_v2.toString(), currentTime);
+                    editor.putInt(ApplicationConstants.initialLevel_v2.toString(), level);
+                    editor.putBoolean(ApplicationConstants.initialSetting_v2.toString(),true);
                     editor.apply();
                 }
                 else
                 {
 
-                    boolean isDifferenceInLevelExist = sharedPreferences.getBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(), false);
+                    boolean isDifferenceInLevelExist = sharedPreferences.getBoolean(ApplicationConstants.isDifferenceInLevelExist_v2.toString(), false);
                     if (!isDifferenceInLevelExist)
                     {
                         long time = System.currentTimeMillis();
                         float chargeIncreaseRate = 0f;
 
-                        long differenceInTime = time - sharedPreferences.getLong(ApplicationConstants.initialTime.toString(), 0);
-                        int differenceInLevel = level - sharedPreferences.getInt(ApplicationConstants.initialLevel.toString(), 0);
+                        long differenceInTime = time - sharedPreferences.getLong(ApplicationConstants.initialTime_v2.toString(), 0);
+                        int differenceInLevel = level - sharedPreferences.getInt(ApplicationConstants.initialLevel_v2.toString(), 0);
                         Log.d(TAG, "difference in level : " + differenceInLevel);
                         long differenceInMinutes = (differenceInTime / (1000 * 60));
                         Log.d(TAG, "difference in minutes : " + differenceInMinutes);
                         if (differenceInLevel > 0)
                         {
                             chargeIncreaseRate = ((float) differenceInLevel) / differenceInMinutes;
-                            editor.putBoolean(ApplicationConstants.isDifferenceInLevelExist.toString(), true);
-                            editor.putFloat(ApplicationConstants.chargeIncreaseRate.toString(), chargeIncreaseRate);
+                            editor.putBoolean(ApplicationConstants.isDifferenceInLevelExist_v2.toString(), true);
+                            editor.putFloat(ApplicationConstants.chargeIncreaseRate_v2.toString(), chargeIncreaseRate);
                             editor.apply();
                             Log.d(TAG," charge increase rate : " + chargeIncreaseRate);
                         }
@@ -93,13 +94,13 @@ public class ChargeChecker extends Worker
                     }
                     else
                     {
-                        float chargeIncreaseRate = sharedPreferences.getFloat(ApplicationConstants.chargeIncreaseRate.toString(), -1f);
+                        float chargeIncreaseRate = sharedPreferences.getFloat(ApplicationConstants.chargeIncreaseRate_v2.toString(), -1f);
                         int remainingMinutesForSafeCharge = (int) Math.ceil((SafeChargerUtil.MINIMUM_SAFE_LIMIT - level) / chargeIncreaseRate);
-                        Log.d(TAG, "remaining minutes of safe charge : " + remainingMinutesForSafeCharge + " at retry count : " + runAttemptCount);
+                        Log.d(TAG, "remaining minutes of safe charge : " + remainingMinutesForSafeCharge );
                         if (remainingMinutesForSafeCharge <= SafeChargerUtil.REMAINING_MINUTES_FOR_SAFE_CHARGE)
                         {
                             SafeChargerUtil.createJob(this.getApplicationContext(),false);
-                            editor.putBoolean(ApplicationConstants.finalCheck.toString(), true);
+                            editor.putBoolean(ApplicationConstants.finalCheck_v2.toString(), true);
                             editor.apply();
                             return Result.failure();
                         }

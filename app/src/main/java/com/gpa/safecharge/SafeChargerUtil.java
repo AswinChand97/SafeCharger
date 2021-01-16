@@ -24,6 +24,9 @@ public class SafeChargerUtil
 {
 
     public final static String TAG="BatteryStatus";
+    public final static String TAG1="BatteryStatus1";
+    public final static String TAG2="BatteryStatus2";
+    public final static String TAG_DELAYED="BatteryStatusDelayed";
     public final static int MINIMUM_SAFE_LIMIT = 85;
     public final static int INITIAL_DELAY = 2;
     public final static int RECURRING_DELAY = 2;
@@ -76,6 +79,18 @@ public class SafeChargerUtil
     }
     public static void createJob(Context context,boolean isInitialDelayRequired)
     {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(String.valueOf(R.string.com_gpa_battery_status_app_level_preference),Context.MODE_PRIVATE);
+        String currentTagName = sharedPreferences.getString(ApplicationConstants.currentTag.toString(),TAG2);
+        String tagName = "";
+        if(currentTagName.equals(TAG2))
+        {
+            tagName = TAG1;
+        }
+        else
+        {
+            tagName = TAG2;
+        }
+        WorkManager.getInstance(context).cancelAllWorkByTag(tagName);
         //setting up the work constraints, the phone must be in the charging state for this work to be queued.
         Constraints constraints = new Constraints.Builder()
                 .setRequiresCharging(true)
@@ -84,7 +99,7 @@ public class SafeChargerUtil
         WorkRequest.Builder workRequestBuilder = new OneTimeWorkRequest.Builder(ChargeChecker.class)
                 .setConstraints(constraints)
                 .setBackoffCriteria(BackoffPolicy.LINEAR,RECURRING_DELAY, TimeUnit.MINUTES)
-                .addTag(TAG);
+                .addTag(tagName);
         if(isInitialDelayRequired)
         {
             workRequestBuilder.setInitialDelay(SafeChargerUtil.INITIAL_DELAY,TimeUnit.MINUTES);
@@ -92,13 +107,18 @@ public class SafeChargerUtil
         WorkRequest chargeCheckRequest = workRequestBuilder.build();
 
         //queuing the work request
-        Log.d(TAG,"queued the job");
+        Log.d(TAG,"queued the job for tag : " + tagName);
         WorkManager.getInstance(context).enqueue(chargeCheckRequest);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(ApplicationConstants.currentTag.toString(),tagName);
+        editor.apply();
     }
     public static void alert(Context context)
     {
+        Log.d(SafeChargerUtil.TAG,"inside alert method starting");
         SharedPreferences sharedPreferences = context.getSharedPreferences(String.valueOf(R.string.com_gpa_battery_status_app_level_preference),Context.MODE_PRIVATE);
-        boolean isAlertEnabled = sharedPreferences.getBoolean(ApplicationConstants.isAlertEnabled.toString(),false);
+        boolean isAlertEnabled = sharedPreferences.getBoolean(ApplicationConstants.isAlertEnabled_v2.toString(),false);
+        Log.d(SafeChargerUtil.TAG,"is alert enabled : " + isAlertEnabled);
         if(isAlertEnabled) {
             Uri notification = getNotification();
             Ringtone ringtone = RingtoneManager.getRingtone(context, notification);
