@@ -30,6 +30,7 @@ public class BootCompletedReceiver extends BroadcastReceiver
             if(!isFirstJobCreated)
             {
                 editor.putBoolean(ApplicationConstants.isFirstJobCreated_v2.toString(),true);
+                editor.putBoolean(ApplicationConstants.isAlertEnabled_v2.toString(),isAlertEnabled);
                 editor.apply();
                 SafeChargerUtil.createJob(context,false);
                 Log.d(SafeChargerUtil.TAG," job created : "  );
